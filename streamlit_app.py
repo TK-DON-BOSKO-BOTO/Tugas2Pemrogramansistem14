@@ -6,7 +6,7 @@ st.title("Spam Classification Dataset")
 st.write("Data Overview")
 
 # Membaca dataset spam
-df_spam = pd.read_csv("/df_spam = pd.read_csv("spam.csv", encoding="iso-8859-1")
+df_spam = pd.read_csv("df_spam = pd.read_csv("spam.csv", encoding="iso-8859-1")
 ", encoding="iso-8859-1")
 
 # Menampilkan kolom untuk lebih memahami data
