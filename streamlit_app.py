@@ -7,7 +7,7 @@ st.write("Data Overview")
 
 # Membaca dataset spam
 df_spam = pd.read_csv("spam.csv", encoding="iso-8859-1")
-")
+
 ", encoding="iso-8859-1")
 
 # Menampilkan kolom untuk lebih memahami data
