@@ -1,45 +1,43 @@
 import streamlit as st
 import pandas as pd
 
+# Fungsi untuk memuat dataset
+def load_data(uploaded_file):
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        return df
+    else:
+        return None
+
 # Judul aplikasi
-st.title("Spam Classification Dataset")
-st.write("Data Overview")
+st.title("Visualisasi Kolom Dataset SPAM")
 
-# Membaca dataset spam
-df_spam = pd.read_csv("spam.csv", encoding="iso-8859-1")
+# Input untuk memasukkan dataset
+uploaded_file = st.file_uploader("spam.csv", type=["csv"])
 
-df_spam = pd.read_csv("spam.csv", encoding="iso-8859-1")
+# Memuat data
+df = load_data(uploaded_file)
 
-# Menampilkan kolom untuk lebih memahami data
-st.write("Dataset Columns: ", df_spam.columns.tolist())
-st.write(df_spam)
+if df is not None:
+    # Menampilkan tabel data untuk referensi
+    st.write("Dataframe SPAM:")
+    st.dataframe(df.head())
 
-# Misal terdapat kolom 'yesno' untuk klasifikasi spam vs ham
-# Memfilter dataset berdasarkan kelas 'yesno' (spam atau ham)
-df_filtered = df_spam[df_spam['yesno'].isin(['y', 'n'])]
+    # Input untuk memilih jenis grafik
+    chart_type = st.selectbox("Pilih jenis grafik", ["Line Chart", "Bar Chart", "Area Chart"])
 
-# Menghitung jumlah kemunculan tiap kelas pada kolom 'yesno'
-label_counts = df_filtered['yesno'].value_counts()
+    # Input untuk memilih kolom
+    columns = st.multiselect("Pilih kolom yang ingin ditampilkan dari dataset SPAM", df.columns)
 
-# Membuat DataFrame untuk visualisasi dan tabel
-df_label_counts = pd.DataFrame(label_counts).reset_index()
-df_label_counts.columns = ['yesno', 'Count']
-
-# Mengubah nilai 'yesno' menjadi lebih deskriptif (spam -> Spam, ham -> Not Spam)
-df_label_counts['yesno'] = df_label_counts['yesno'].replace({'spam': 'Spam', 'ham': 'Not Spam'})
-
-# Menampilkan tabel jumlah tiap kelas 'yesno'
-st.write("Class Counts Table")
-st.dataframe(df_label_counts)
-
-# Menampilkan dataset yang telah difilter
-st.write("Filtered Dataset")
-st.dataframe(df_filtered)
-
-#
-# Bar Chart untuk klasifikasi spam
-#
-st.title("Bar Chart of Spam Classification")
-st.bar_chart(df_label_counts.set_index('yesno'))
-
-st.markdown("---")
+    # Menampilkan grafik per kolom yang dipilih
+    for column in columns:
+        st.write(f"Grafik untuk kolom: {column} dari dataset SPAM")
+        
+        if chart_type == "Line Chart":
+            st.line_chart(df[[column]])
+        elif chart_type == "Bar Chart":
+            st.bar_chart(df[[column]])
+        elif chart_type == "Area Chart":
+            st.area_chart(df[[column]])
+else:
+    st.write("spam.csv")
