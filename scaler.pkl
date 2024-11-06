@@ -1,0 +1,10 @@
+import pickle
+from sklearn.preprocessing import StandardScaler
+
+# Inisialisasi dan fit scaler
+scaler = StandardScaler()
+scaler.fit(X_train)  # Pastikan X_train sudah didefinisikan sebelumnya
+
+# Simpan scaler ke file
+with open("scaler.pkl", "wb") as file:
+    pickle.dump(scaler, file)
