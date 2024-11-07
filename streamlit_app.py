@@ -1,51 +1,44 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+import pickle
+import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
 
+# Muat model
+model = tf.keras.models.load_model('spam_classifier_model.h5')
 
-# Fungsi untuk memuat dataset
-def load_data(uploaded_file):
-    if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
-        return df
-    else:
-        return None
+# Inisialisasi scaler
+scaler = StandardScaler()
 
+# Fungsi untuk membuat prediksi
+def predict_spam(features):
+    features_scaled = scaler.transform(features)
+    features_scaled = np.reshape(features_scaled, (features_scaled.shape[0], 1, features_scaled.shape[1]))
+    prediction = model.predict(features_scaled)
+    return (prediction > 0.5).astype("int32")
 
-# Judul aplikasi
-st.title("Visualisasi Kolom Dataset SPAM")
+# Antarmuka pengguna
+st.title("Spam Classifier")
+st.write("Masukkan fitur email yang akan dianalisis:")
 
+# Input untuk fitur
+crl_tot = st.number_input("circular.tot:")
+dollar = st.number_input("dollar:")
+bang = st.number_input("bang:")
+money = st.number_input("money:")
+n000 = st.number_input("n000:")
+make = st.number_input("make:")
 
-# Input untuk memasukkan dataset
-uploaded_file = st.file_uploader("spam.csv", type=["csv"])
-
-
-# Memuat data
-df = load_data(uploaded_file)
-
-
-if df is not None:
-    # Menampilkan tabel data untuk referensi
-    st.write("Dataframe SPAM:")
-    st.dataframe(df.head())
-
-
-    # Input untuk memilih jenis grafik
-    chart_type = st.selectbox("Pilih jenis grafik", ["Line Chart", "Bar Chart", "Area Chart"])
-
-
-    # Input untuk memilih kolom
-    columns = st.multiselect("Pilih kolom yang ingin ditampilkan dari dataset SPAM", df.columns)
-
-
-    # Menampilkan grafik per kolom yang dipilih
-    for column in columns:
-        st.write(f"Grafik untuk kolom: {column} dari dataset SPAM")
-       
-        if chart_type == "Line Chart":
-            st.line_chart(df[[column]])
-        elif chart_type == "Bar Chart":
-            st.bar_chart(df[[column]])
-        elif chart_type == "Area Chart":
-            st.area_chart(df[[column]])
-else:
-    st.write("spam.csv")
+# Tombol untuk membuat prediksi
+if st.button("Prediksi"):
+    # Membuat DataFrame untuk input
+    input_data = pd.DataFrame([[crl_tot, dollar, bang, money, n000, make]], columns=['crl.tot', 'dollar', 'bang', 'money', 'n000', 'make'])
+    
+    # Fit scaler pada data input (hanya dilakukan pertama kali)
+    if 'X_train_scaled' not in st.session_state:
+        X_train_scaled = scaler.fit_transform(input_data)  # Jika belum ada data latih
+        st.session_state.X_train_scaled = X_train_scaled
+    
+    prediction = predict_spam(input_data)
+    st.write("Hasil Prediksi: ", "Spam" if prediction[0][0] == 1 else "Not Spam")
