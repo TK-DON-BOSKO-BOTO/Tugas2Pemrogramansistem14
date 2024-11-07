@@ -6,6 +6,7 @@ import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 
 # Muat model
+model = tf.keras.models.load_model('spam_classifier_model.h5')
 model = tf.keras.models.load_model('spam_classifier_model.h5', custom_objects={'custom_object_name': custom_object})
 
 # Inisialisasi scaler
