@@ -5,10 +5,7 @@ import pickle
 import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 
-model.save('saved_model_directory')
-# Then load with:
-model = tf.keras.models.load_model('saved_model_directory')
-
+model.save('spam_classifier_model.h5')
 # Muat model
 model = tf.keras.models.load_model('spam_classifier_model.h5', custom_objects={'custom_object_name': custom_object})
 
